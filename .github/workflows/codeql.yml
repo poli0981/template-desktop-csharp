@@ -1,0 +1,41 @@
+name: CodeQL (C#/.NET)
+
+# Static analysis for C# / .NET 10. Calls the reusable workflow in
+# poli0981/.github so every repo stays in sync. If the org-wide workflow
+# changes, this caller picks the new defaults up automatically.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.sln"
+      - "**/Directory.Packages.props"
+      - "**/Directory.Build.props"
+      - ".github/workflows/codeql.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.sln"
+      - "**/Directory.Packages.props"
+      - "**/Directory.Build.props"
+  schedule:
+    # Mondays 04:00 UTC == 11:00 ICT
+    - cron: "0 4 * * 1"
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    uses: poli0981/.github/.github/workflows/codeql-csharp.yml@main
+    with:
+      dotnet_version: "10.0.x"
+      queries: "security-extended,security-and-quality"
+      timeout_minutes: 30
+    secrets: inherit

@@ -1,0 +1,53 @@
+name: ✨ Feature request
+description: Suggest a new feature or improvement.
+title: "feat: <short summary>"
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For broad "what if we…" ideas, open a [Discussion](https://github.com/poli0981/template-desktop-csharp/discussions)
+        first — Issues are for things concrete enough to build.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What user-visible problem does this feature address? Avoid prescribing a solution here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How would you like it to work? Sketches, mockups, and code snippets welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you thought about and why you didn't pick them.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Template-level (affects every repo created from this template)
+        - Single-repo (only this repo)
+        - Not sure
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's [Code of Conduct](../CODE_OF_CONDUCT.md).
+          required: true

@@ -1,0 +1,93 @@
+name: Security Advisory → Discussion
+
+# When a GitHub Security Advisory is *published* (made public), automatically
+# open a "Security" Discussion so users can find the writeup, ask questions,
+# and link the upgrade path. Private/draft advisories never trigger this.
+#
+# Pre-requisites:
+#   - GitHub Discussions enabled.
+#   - A category named "Security" exists. Change the SLUG below if you use a
+#     different name (the GraphQL API takes the slug, not the display name).
+#
+# Permissions kept to the minimum the GraphQL `createDiscussion` mutation needs.
+
+on:
+  repository_dispatch:
+    types: [security-advisory-published]
+  workflow_dispatch:
+    inputs:
+      advisory_url:
+        description: "Public URL of the advisory (e.g. https://github.com/owner/repo/security/advisories/GHSA-xxxx)"
+        required: true
+        type: string
+      severity:
+        description: "Severity"
+        required: true
+        type: choice
+        options: [low, medium, high, critical]
+        default: high
+      summary:
+        description: "One-line summary"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  open-discussion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Create Discussion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ADVISORY_URL: ${{ inputs.advisory_url || github.event.client_payload.advisory_url }}
+          SEVERITY: ${{ inputs.severity || github.event.client_payload.severity }}
+          SUMMARY: ${{ inputs.summary || github.event.client_payload.summary }}
+          CATEGORY_SLUG: security
+        shell: bash
+        run: |
+          set -euo pipefail
+          owner="${GITHUB_REPOSITORY%/*}"
+          repo="${GITHUB_REPOSITORY##*/}"
+
+          # Look up repo + category IDs via GraphQL.
+          ids=$(gh api graphql -f query='
+            query($owner:String!,$repo:String!,$slug:String!) {
+              repository(owner:$owner, name:$repo) {
+                id
+                discussionCategory(slug:$slug) { id }
+              }
+            }' -F owner="$owner" -F repo="$repo" -F slug="$CATEGORY_SLUG")
+
+          repo_id=$(echo "$ids" | jq -r '.data.repository.id')
+          cat_id=$(echo "$ids" | jq -r '.data.repository.discussionCategory.id')
+
+          if [ -z "$cat_id" ] || [ "$cat_id" = "null" ]; then
+            echo "::warning::Discussion category '$CATEGORY_SLUG' not found — skipping."
+            exit 0
+          fi
+
+          title="🔒 [${SEVERITY^^}] $SUMMARY"
+          body=$(cat <<EOF
+          A new security advisory has been published for this repository.
+
+          **Severity:** $SEVERITY
+          **Advisory:** $ADVISORY_URL
+
+          Please follow the upgrade instructions in the linked advisory. Discuss
+          mitigation, ask questions, or report related issues in this thread.
+
+          *Posted automatically by \`.github/workflows/security-advisory-discussion.yml\`.*
+          EOF
+          )
+
+          gh api graphql -f query='
+            mutation($repoId:ID!,$catId:ID!,$title:String!,$body:String!) {
+              createDiscussion(input:{
+                repositoryId:$repoId, categoryId:$catId,
+                title:$title, body:$body
+              }) { discussion { url } }
+            }' -F repoId="$repo_id" -F catId="$cat_id" -F title="$title" -F body="$body"

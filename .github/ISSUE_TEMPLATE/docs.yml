@@ -1,0 +1,26 @@
+name: 📚 Documentation issue
+description: Something in the README, docs/, or comments is wrong, missing, or confusing.
+title: "docs: <short summary>"
+labels: ["documentation"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Where is the problem?
+      description: File path + line number, or a URL.
+      placeholder: "docs/dev_env.md L42"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong / missing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: Optional — paste a rewrite if you have one in mind.

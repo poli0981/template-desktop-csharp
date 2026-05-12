@@ -1,0 +1,67 @@
+version: 2
+
+# Keep dependencies fresh, group by ecosystem so we never see 30 micro-PRs in a
+# week. Schedule lines up with Asia/Bangkok working hours (08:00 ICT == 01:00 UTC).
+# Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+updates:
+  # ── NuGet (C# / .NET) ─────────────────────────────────────────────────────
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "01:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "nuget"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      # Lump the big SDK / UI families into one PR per family.
+      dotnet-sdk:
+        patterns:
+          - "Microsoft.NET.Sdk*"
+          - "Microsoft.Extensions.*"
+          - "System.*"
+      winappsdk:
+        patterns:
+          - "Microsoft.WindowsAppSDK*"
+          - "Microsoft.Windows.SDK.*"
+          - "Microsoft.Graphics.Win2D"
+      community-toolkit:
+        patterns:
+          - "CommunityToolkit.*"
+      velopack:
+        patterns:
+          - "Velopack*"
+      testing:
+        patterns:
+          - "xunit*"
+          - "Microsoft.NET.Test.Sdk"
+          - "FluentAssertions*"
+          - "Moq"
+          - "NSubstitute"
+
+  # ── GitHub Actions ────────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "01:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      actions:
+        patterns:
+          - "*"

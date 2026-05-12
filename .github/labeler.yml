@@ -1,0 +1,56 @@
+# actions/labeler v5 config. Each top-level key is a label; the value is a
+# match expression. See https://github.com/actions/labeler#usage
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/dependabot.yml"
+          - ".github/labeler.yml"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.csproj"
+          - "**/Directory.Packages.props"
+          - "**/Directory.Build.props"
+          - "**/packages.lock.json"
+          - "**/package.json"
+          - "**/package-lock.json"
+          - "**/pnpm-lock.yaml"
+
+ui:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.xaml"
+          - "**/*.xaml.cs"
+          - "src/**/Views/**"
+          - "src/**/Controls/**"
+          - "src/**/Styles/**"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tests/**"
+          - "**/*.Tests/**"
+          - "**/*.Tests.csproj"
+
+i18n:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/i18n/**"
+          - "**/Strings/**/*.resw"
+          - "**/Resources.*.resx"
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "SECURITY.md"
+          - ".github/workflows/codeql*.yml"
+          - ".github/workflows/security-advisory-discussion.yml"

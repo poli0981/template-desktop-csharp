@@ -1,0 +1,78 @@
+name: 🐞 Bug report
+description: Something is broken or behaves unexpectedly.
+title: "bug: <short summary>"
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug! Please search existing issues
+        before opening a new one. For security issues, **do not file here** —
+        use the [Security Advisory form](https://github.com/poli0981/template-desktop-csharp/security/advisories/new).
+
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Output of `--version` or the value shown in About.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Windows build
+      description: Run `winver` and paste the version line.
+      placeholder: "Windows 11 Pro 25H2 (26300.xxxx)"
+    validations:
+      required: true
+
+  - type: input
+    id: dotnet
+    attributes:
+      label: .NET SDK / runtime
+      description: Output of `dotnet --version`.
+      placeholder: "10.0.100"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear, step-by-step description of the bug.
+      placeholder: |
+        1. Open the app
+        2. Click …
+        3. Expected: …
+        4. Actual: …
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack trace
+      description: Paste relevant log lines. Wrap in triple backticks.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / recording
+      description: Drag & drop images or short clips.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's [Code of Conduct](../CODE_OF_CONDUCT.md).
+          required: true
+        - label: I searched existing issues and discussions before filing this.
+          required: true

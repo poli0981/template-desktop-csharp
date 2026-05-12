@@ -1,0 +1,15 @@
+# Code owners. The first matching pattern wins. Owners are auto-requested for
+# review on every PR. Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: maintainer reviews everything not matched below.
+* @poli0981
+
+# CI / supply chain — extra eyes whenever workflows change.
+/.github/                       @poli0981
+/.github/workflows/             @poli0981
+/.github/dependabot.yml         @poli0981
+
+# Security policy & advisories.
+/SECURITY.md                                       @poli0981
+/.github/workflows/codeql*.yml                     @poli0981
+/.github/workflows/security-advisory-discussion.yml @poli0981

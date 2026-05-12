@@ -1,0 +1,42 @@
+# EditorConfig is awesome: https://editorconfig.org
+# Baseline for C# 14 / .NET 10 + general repo hygiene.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{md,mdx}]
+trim_trailing_whitespace = false  # markdown line breaks need 2 trailing spaces
+
+[*.{yml,yaml,json,xml,csproj,props,targets,config}]
+indent_size = 2
+
+[*.{ps1,psm1,psd1}]
+end_of_line = crlf
+
+[*.{cs,vb}]
+indent_size = 4
+# .NET formatting rules — full ruleset belongs in a Directory.Build.props /
+# .editorconfig at the solution root once src/ exists. Keeping just the core here.
+csharp_new_line_before_open_brace = all
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:warning
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_style_prefer_primary_constructors = true:suggestion
+
+# Nullable / warning escalation
+dotnet_diagnostic.CS8600.severity = warning
+dotnet_diagnostic.CS8602.severity = warning
+dotnet_diagnostic.CS8603.severity = warning
+dotnet_diagnostic.CS8625.severity = warning
+
+[*.{xaml}]
+indent_size = 4

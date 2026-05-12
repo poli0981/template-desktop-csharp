@@ -1,0 +1,64 @@
+# Auto-detect text files, normalize line endings on commit.
+* text=auto eol=lf
+
+# Force LF for cross-platform sources / configs.
+*.cs        text eol=lf diff=csharp
+*.csproj    text eol=lf
+*.sln       text eol=lf
+*.props     text eol=lf
+*.targets   text eol=lf
+*.json      text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.md        text eol=lf
+*.xml       text eol=lf
+*.xaml      text eol=lf
+*.config    text eol=lf
+*.sh        text eol=lf
+
+# Windows-specific scripts keep CRLF.
+*.ps1       text eol=crlf
+*.psm1      text eol=crlf
+*.psd1      text eol=crlf
+*.cmd       text eol=crlf
+*.bat       text eol=crlf
+
+# Treat as binary — no diff churn / no EOL conversion.
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.webp      binary
+*.ico       binary
+*.icns      binary
+*.pdf       binary
+*.zip       binary
+*.tar       binary
+*.tar.gz    binary
+*.tgz       binary
+*.7z        binary
+*.exe       binary
+*.dll       binary
+*.pdb       binary
+*.so        binary
+*.dylib     binary
+*.lib       binary
+*.pfx       binary
+*.snk       binary
+*.appx      binary
+*.msix      binary
+*.nupkg     binary
+*.snupkg    binary
+*.vpk       binary
+*.ttf       binary
+*.otf       binary
+*.woff      binary
+*.woff2     binary
+*.mp4       binary
+*.mov       binary
+*.webm      binary
+
+# Linguist hints — keep GitHub's stats sane.
+docs/**     linguist-documentation
+*.md        linguist-documentation
+tests/**    linguist-detectable=true
