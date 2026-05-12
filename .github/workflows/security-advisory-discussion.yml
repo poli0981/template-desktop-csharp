@@ -48,16 +48,17 @@ jobs:
           SUMMARY: ${{ inputs.summary || github.event.client_payload.summary }}
           CATEGORY_SLUG: security
         shell: bash
-        # shellcheck disable=SC2016
-        # Single-quoted GraphQL strings intentionally contain literal `$owner`,
-        # `$repo`, `$slug` etc. — those are GraphQL variables passed via `-F`,
-        # not bash variables.
         run: |
+          # shellcheck disable=SC2016
+          # Single-quoted GraphQL strings intentionally contain literal `$owner`,
+          # `$repo`, `$slug` etc. — those are GraphQL variables bound by `-F`,
+          # not bash variables.
           set -euo pipefail
           owner="${GITHUB_REPOSITORY%/*}"
           repo="${GITHUB_REPOSITORY##*/}"
 
           # Look up repo + category IDs via GraphQL.
+          # shellcheck disable=SC2016
           ids=$(gh api graphql -f query='
             query($owner:String!,$repo:String!,$slug:String!) {
               repository(owner:$owner, name:$repo) {
@@ -88,6 +89,7 @@ jobs:
           EOF
           )
 
+          # shellcheck disable=SC2016
           gh api graphql -f query='
             mutation($repoId:ID!,$catId:ID!,$title:String!,$body:String!) {
               createDiscussion(input:{
