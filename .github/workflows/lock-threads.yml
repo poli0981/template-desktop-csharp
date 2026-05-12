@@ -1,0 +1,37 @@
+name: Lock closed threads
+
+# Locks issues, PRs, and discussions N days after they close so old threads
+# don't accumulate drive-by comments / spam.
+
+on:
+  schedule:
+    # 03:00 UTC daily
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+  discussions: write
+
+concurrency:
+  group: lock-threads
+  cancel-in-progress: true
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: dessant/lock-threads@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-inactive-days: 30
+          pr-inactive-days: 30
+          discussion-inactive-days: 60
+          exclude-any-issue-labels: "keep-unlocked,security"
+          exclude-any-pr-labels: "keep-unlocked,security"
+          add-issue-labels: "locked"
+          add-pr-labels: "locked"
+          issue-lock-reason: "resolved"
+          pr-lock-reason: "resolved"

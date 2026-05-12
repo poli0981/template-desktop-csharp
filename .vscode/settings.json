@@ -1,0 +1,55 @@
+{
+  "editor.formatOnSave": true,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.rulers": [100, 120],
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.eol": "\n",
+
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[xaml]": { "editor.tabSize": 4 },
+  "[yaml]":  { "editor.tabSize": 2, "editor.defaultFormatter": "redhat.vscode-yaml" },
+  "[json]":  { "editor.tabSize": 2 },
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+  },
+
+  "dotnet.defaultSolution": "disable",
+  "dotnet.unitTests.runSettingsPath": "",
+
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "/.github/workflows/*.{yml,yaml}",
+    "https://json.schemastore.org/github-action.json":    "/action.{yml,yaml}",
+    "https://json.schemastore.org/dependabot-2.0.json":   "/.github/dependabot.{yml,yaml}"
+  },
+
+  "markdownlint.config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD041": false
+  },
+
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/.idea": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/publish": true,
+    "**/release": true,
+    "**/.git": true
+  }
+}

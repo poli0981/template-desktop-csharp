@@ -1,0 +1,56 @@
+name: Lint
+
+# Fast checks for Markdown + GitHub Actions YAML. Runs on every PR so docs and
+# workflow churn don't ride through unchecked.
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - ".github/workflows/**"
+      - ".github/dependabot.yml"
+      - ".github/labeler.yml"
+      - ".github/release-drafter.yml"
+      - ".github/release.yml"
+      - ".markdownlint.json"
+      - ".github/workflows/lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - ".github/workflows/**"
+      - ".markdownlint.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  markdown:
+    name: Markdown
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DavidAnson/markdownlint-cli2-action@v17
+        with:
+          globs: |
+            **/*.md
+            !node_modules
+            !**/bin/**
+            !**/obj/**
+
+  actions:
+    name: GitHub Actions (actionlint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run actionlint
+        uses: raven-actions/actionlint@v2
+        with:
+          fail-on-error: true

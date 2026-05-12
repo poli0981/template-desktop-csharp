@@ -1,0 +1,42 @@
+# Optional: feed PRs into auto-drafted release notes. Activate by adding the
+# release-drafter action workflow. Keeping the config here so it ships with the
+# template even before the workflow is enabled.
+# Docs: https://github.com/release-drafter/release-drafter
+
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+
+categories:
+  - title: "🚀 Features"
+    labels: ["enhancement", "feature", "feat"]
+  - title: "🐞 Bug fixes"
+    labels: ["bug", "fix"]
+  - title: "🛡️ Security"
+    labels: ["security"]
+  - title: "📚 Documentation"
+    labels: ["documentation"]
+  - title: "🧰 Maintenance"
+    labels: ["chore", "refactor", "ci", "build", "dependencies"]
+
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-title-escapes: '\<*_&'
+
+version-resolver:
+  major:
+    labels: ["breaking", "major"]
+  minor:
+    labels: ["enhancement", "feature", "feat", "minor"]
+  patch:
+    labels: ["bug", "fix", "security", "patch", "chore", "documentation"]
+  default: patch
+
+exclude-labels:
+  - "skip-changelog"
+  - "stale"
+
+template: |
+  ## What's changed
+
+  $CHANGES
+
+  **Full changelog:** https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

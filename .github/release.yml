@@ -1,0 +1,38 @@
+# GitHub-native auto-generated release notes config.
+# Read by the `--generate-notes` flag in `gh release create` and by the
+# "Generate release notes" button in the UI.
+# Docs: https://docs.github.com/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
+changelog:
+  exclude:
+    labels:
+      - "skip-changelog"
+      - "stale"
+      - "duplicate"
+      - "invalid"
+      - "wontfix"
+    authors:
+      - "dependabot[bot]"
+      - "github-actions[bot]"
+
+  categories:
+    - title: "🚀 Features"
+      labels: ["feat", "feature", "enhancement"]
+    - title: "🐞 Bug fixes"
+      labels: ["fix", "bug"]
+    - title: "🛡️ Security"
+      labels: ["security"]
+    - title: "⚡ Performance"
+      labels: ["perf", "performance"]
+    - title: "📚 Documentation"
+      labels: ["docs", "documentation"]
+    - title: "🌐 Internationalization"
+      labels: ["i18n", "l10n"]
+    - title: "🧪 Tests"
+      labels: ["test", "tests"]
+    - title: "🛠️ Maintenance"
+      labels: ["chore", "refactor", "ci", "build", "dependencies"]
+    - title: "💥 Breaking changes"
+      labels: ["breaking", "breaking-change"]
+    - title: "Other changes"
+      labels: ["*"]

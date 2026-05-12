@@ -1,0 +1,71 @@
+name: Build & Test
+
+# Restore → build → test on every push to main and every PR. Runs on Windows so
+# WinUI 3 / Windows App SDK build steps work without faking a runtime ID.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - "LICENSE"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - "LICENSE"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (windows-latest, .NET 10)
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+        # NuGet cache is enabled per-repo once a packages.lock.json or .csproj
+        # actually exists. setup-dotnet's `cache: true` errors out otherwise.
+
+      - name: Show toolchain
+        run: |
+          dotnet --info
+
+      # No-op until there's a .sln / .csproj in the repo. Once src/ exists the
+      # `if:` guard can be dropped.
+      - name: Restore
+        if: ${{ hashFiles('**/*.sln', '**/*.csproj') != '' }}
+        run: dotnet restore
+
+      - name: Build
+        if: ${{ hashFiles('**/*.sln', '**/*.csproj') != '' }}
+        run: dotnet build --configuration Release --no-restore -warnaserror
+
+      - name: Test
+        if: ${{ hashFiles('**/*.Tests.csproj', '**/*.Test.csproj') != '' }}
+        run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload test results
+        if: ${{ always() && hashFiles('**/test-results.trx') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: "**/test-results.trx"
+          retention-days: 14

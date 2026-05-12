@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question / share an idea
+    url: https://github.com/poli0981/template-desktop-csharp/discussions
+    about: Use Discussions for questions, ideas, and general help.
+  - name: Report a security vulnerability
+    url: https://github.com/poli0981/template-desktop-csharp/security/advisories/new
+    about: Please do NOT open a public issue for security reports.
+  - name: Chat on Discord
+    url: https://discord.gg/2aNR3aVt
+    about: Casual chat with the maintainer and other users.

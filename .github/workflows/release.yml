@@ -1,0 +1,158 @@
+name: Release
+
+# Triggered by pushing a tag like `v1.2.3`. Builds the app, packages it with
+# Velopack, attaches artifacts to a GitHub Release, and (optionally) opens a
+# Discussion in the "Announcements" category.
+#
+# Pre-requisites the downstream repo must add before this workflow runs:
+#   1. A buildable .sln with a publishable app project under src/App/.
+#   2. Repo secrets:
+#        - (optional) CODE_SIGN_PFX_BASE64   — base64-encoded code-signing PFX
+#        - (optional) CODE_SIGN_PASSWORD     — PFX password
+#        - (optional) VELOPACK_FEED_TOKEN    — to publish to a private feed
+#   3. The repo has GitHub Discussions enabled with an "Announcements" category.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to release (e.g. v1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write          # create the Release + attach assets
+  discussions: write       # open the announcement Discussion
+  id-token: write          # OIDC for any future signing provider
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build & pack
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0   # full history so we can build release notes from git log
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Derive version from tag
+        id: meta
+        shell: pwsh
+        run: |
+          $tag = "${{ inputs.tag || github.ref_name }}"
+          $version = $tag.TrimStart("v")
+          if (-not ($version -match '^\d+\.\d+\.\d+([-.+].+)?$')) {
+            throw "Tag '$tag' is not a valid SemVer version"
+          }
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "Releasing version $version"
+
+      - name: Restore
+        if: ${{ hashFiles('**/*.sln', '**/*.csproj') != '' }}
+        run: dotnet restore
+
+      - name: Build
+        if: ${{ hashFiles('**/*.sln', '**/*.csproj') != '' }}
+        run: dotnet build --configuration Release --no-restore -warnaserror
+
+      - name: Test
+        if: ${{ hashFiles('**/*.Tests.csproj', '**/*.Test.csproj') != '' }}
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Publish app (win-x64)
+        if: ${{ hashFiles('src/App/*.csproj') != '' }}
+        run: |
+          dotnet publish src/App `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained `
+            -p:Version=${{ steps.meta.outputs.version }} `
+            -o publish/
+
+      - name: Install Velopack CLI
+        if: ${{ hashFiles('src/App/*.csproj') != '' }}
+        run: dotnet tool install -g vpk
+
+      - name: Pack with Velopack
+        if: ${{ hashFiles('src/App/*.csproj') != '' }}
+        run: |
+          vpk pack `
+            --packId "${{ github.event.repository.name }}" `
+            --packVersion ${{ steps.meta.outputs.version }} `
+            --packDir publish/ `
+            --outputDir release/
+
+      - name: Upload artifacts (workflow scope)
+        if: ${{ hashFiles('release/*') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: velopack-${{ steps.meta.outputs.version }}
+          path: release/
+          retention-days: 30
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: velopack-${{ needs.build.outputs.version }}
+          path: release/
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ inputs.tag || github.ref_name }}"
+          # Try to create with discussion category; fall back to plain release if
+          # Discussions or the category aren't configured.
+          if ls release/* >/dev/null 2>&1; then
+            assets=(release/*)
+          else
+            assets=()
+          fi
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            if ! gh release create "$tag" \
+                --title "$tag" \
+                --generate-notes \
+                --discussion-category "Announcements" \
+                "${assets[@]}"; then
+              echo "::warning::Discussions/category unavailable — creating release without discussion."
+              gh release create "$tag" \
+                --title "$tag" \
+                --generate-notes \
+                "${assets[@]}"
+            fi
+          else
+            if [ "${#assets[@]}" -gt 0 ]; then
+              gh release upload "$tag" "${assets[@]}" --clobber
+            fi
+          fi
