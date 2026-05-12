@@ -48,6 +48,10 @@ jobs:
           SUMMARY: ${{ inputs.summary || github.event.client_payload.summary }}
           CATEGORY_SLUG: security
         shell: bash
+        # shellcheck disable=SC2016
+        # Single-quoted GraphQL strings intentionally contain literal `$owner`,
+        # `$repo`, `$slug` etc. — those are GraphQL variables passed via `-F`,
+        # not bash variables.
         run: |
           set -euo pipefail
           owner="${GITHUB_REPOSITORY%/*}"

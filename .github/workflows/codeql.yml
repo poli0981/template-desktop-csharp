@@ -32,7 +32,27 @@ permissions:
   security-events: write
 
 jobs:
+  # CodeQL needs a build to inspect — the reusable workflow hard-errors when no
+  # .sln is present. Skip the job entirely until a project lands in src/.
+  guard:
+    runs-on: ubuntu-latest
+    outputs:
+      has_csharp: ${{ steps.check.outputs.has_csharp }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        shell: bash
+        run: |
+          if compgen -G "**/*.sln" > /dev/null || compgen -G "**/*.csproj" > /dev/null; then
+            echo "has_csharp=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_csharp=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No .sln/.csproj found — skipping CodeQL until C# code lands."
+          fi
+
   analyze:
+    needs: guard
+    if: needs.guard.outputs.has_csharp == 'true'
     uses: poli0981/.github/.github/workflows/codeql-csharp.yml@main
     with:
       dotnet_version: "10.0.x"

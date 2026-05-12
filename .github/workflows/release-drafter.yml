@@ -7,10 +7,12 @@ name: Release Drafter
 on:
   push:
     branches: [main]
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
-    branches: [main]
   workflow_dispatch:
+
+# Note: triggering on `pull_request` would require the release-drafter config
+# to already exist on the default branch, which fails on the first bootstrap
+# merge. The push-only trigger keeps drafts updated after every merge to main
+# without needing PR-level autolabeling.
 
 permissions:
   contents: write

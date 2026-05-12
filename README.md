@@ -61,7 +61,7 @@ vpk pack --packId YourApp --packVersion 0.1.0 --packDir publish/
 
 ## Repository layout (planned)
 
-```
+```text
 .
 ├── .github/                    # workflows, issue/PR templates, FUNDING, dependabot
 ├── docs/
@@ -99,6 +99,7 @@ directly or calls a reusable workflow from [`poli0981/.github`](https://github.c
 | `labeler.yml` | PR opened | auto-label PR by path |
 
 Optional / configure-per-repo:
+
 - `dependabot.yml` — weekly NuGet + GitHub Actions updates, grouped to one PR per area.
 - `lock-threads.yml` — lock issues 30 days after they close.
 

@@ -6,7 +6,7 @@ shape rather than a description of what's on disk today.
 
 ## Project layout
 
-```
+```text
 src/
 ├── App/                       # WinUI 3 startup project — main executable
 │   ├── App.xaml.cs            # composition root: DI container, logging, lifecycle
@@ -39,7 +39,7 @@ keeps the business logic testable headless.
 
 ## Dependency layout
 
-```
+```text
                         ┌──────────────┐
                         │     App      │  WinUI 3, Fluent 2, MVVM Toolkit
                         └──┬────────┬──┘
@@ -107,7 +107,7 @@ into extension methods on `IServiceCollection` per feature area.
 
 ## Auto-update flow
 
-```
+```text
 ┌─ App start ─┐    ┌─ UpdateService.CheckForUpdate ─┐    ┌─ download delta ─┐
 │             │ →  │ Velopack: HEAD /RELEASES       │ →  │ apply on quit    │
 └─────────────┘    └────────────────────────────────┘    └──────────────────┘

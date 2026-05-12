@@ -66,6 +66,7 @@ The template's caller workflows point at `poli0981/.github`. Three options:
 ## 6. Branch protection
 
 `main`:
+
 - [ ] Require status checks: **`build`** and **`Analyze (csharp)`**.
 - [ ] Require signed commits.
 - [ ] Require linear history (encourages squash-merge).

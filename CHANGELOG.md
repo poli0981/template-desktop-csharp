@@ -10,6 +10,7 @@ on first commit and start at `0.1.0`.
 ## [Unreleased]
 
 ### Added
+
 - Initial template skeleton: docs, community health files, GitHub workflows,
   Dependabot, CodeQL, and FUNDING configuration.
 

@@ -41,9 +41,8 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "10.0.x"
-          # Cache NuGet via setup-dotnet's built-in cache to avoid an extra step.
-          cache: true
-          cache-dependency-path: "**/packages.lock.json"
+        # NuGet cache is enabled per-repo once a packages.lock.json or .csproj
+        # actually exists. setup-dotnet's `cache: true` errors out otherwise.
 
       - name: Show toolchain
         run: |

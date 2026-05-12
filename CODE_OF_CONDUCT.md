@@ -34,7 +34,7 @@ Examples of unacceptable behavior:
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the maintainer at **lopop05905@proton.me**.
+reported to the maintainer at **<lopop05905@proton.me>**.
 
 All complaints will be reviewed and investigated promptly and fairly. All
 project maintainers are obligated to respect the privacy and security of the
