@@ -39,6 +39,7 @@ jobs:
 
     outputs:
       version: ${{ steps.meta.outputs.version }}
+      has_assets: ${{ steps.assets.outputs.has_assets }}
 
     steps:
       - name: Checkout
@@ -50,8 +51,8 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "10.0.x"
-          cache: true
-          cache-dependency-path: "**/packages.lock.json"
+        # NuGet cache is enabled per-repo once a packages.lock.json or .csproj
+        # actually exists. setup-dotnet's `cache: true` errors out otherwise.
 
       - name: Derive version from tag
         id: meta
@@ -100,8 +101,19 @@ jobs:
             --packDir publish/ `
             --outputDir release/
 
+      - name: Detect packaged assets
+        id: assets
+        shell: bash
+        run: |
+          if compgen -G "release/*" > /dev/null; then
+            echo "has_assets=true"  >> "$GITHUB_OUTPUT"
+          else
+            echo "has_assets=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No release/* artifacts produced — publishing a source-only release."
+          fi
+
       - name: Upload artifacts (workflow scope)
-        if: ${{ hashFiles('release/*') != '' }}
+        if: steps.assets.outputs.has_assets == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: velopack-${{ steps.meta.outputs.version }}
@@ -121,6 +133,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download artifacts
+        if: needs.build.outputs.has_assets == 'true'
         uses: actions/download-artifact@v4
         with:
           name: velopack-${{ needs.build.outputs.version }}
