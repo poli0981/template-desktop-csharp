@@ -4,17 +4,23 @@
   "tools": {
     "vpk": {
       "version": "0.0.1298",
-      "commands": ["vpk"],
+      "commands": [
+        "vpk"
+      ],
       "rollForward": false
     },
     "dotnet-format": {
       "version": "5.1.250801",
-      "commands": ["dotnet-format"],
+      "commands": [
+        "dotnet-format"
+      ],
       "rollForward": false
     },
     "dotnet-outdated-tool": {
-      "version": "4.6.8",
-      "commands": ["dotnet-outdated"],
+      "version": "4.7.1",
+      "commands": [
+        "dotnet-outdated"
+      ],
       "rollForward": false
     }
   }
