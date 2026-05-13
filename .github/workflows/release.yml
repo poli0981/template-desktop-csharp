@@ -114,7 +114,7 @@ jobs:
 
       - name: Upload artifacts (workflow scope)
         if: steps.assets.outputs.has_assets == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: velopack-${{ steps.meta.outputs.version }}
           path: release/
@@ -134,7 +134,7 @@ jobs:
 
       - name: Download artifacts
         if: needs.build.outputs.has_assets == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: velopack-${{ needs.build.outputs.version }}
           path: release/
