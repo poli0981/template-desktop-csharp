@@ -39,7 +39,7 @@ jobs:
     outputs:
       has_csharp: ${{ steps.check.outputs.has_csharp }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - id: check
         shell: bash
         run: |
